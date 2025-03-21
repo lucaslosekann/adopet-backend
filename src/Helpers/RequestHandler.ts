@@ -4,9 +4,22 @@ import HttpError from "./HttpError";
 import logger from "./logger";
 import HttpResponse from "./HttpResponse";
 import { randomUUID } from "node:crypto";
+import { AuthenticatedRequest } from "../Middlewares/AuthMiddleware";
+
+export function MiddlewareHandler(
+    middleware: (req: Request | AuthenticatedRequest, res: Response, next: NextFunction) => Promise<unknown> | unknown
+) {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            await middleware(req, res, next);
+        } catch (error) {
+            next(error);
+        }
+    };
+}
 
 export default function RequestHandler(
-    controller: (req: Request, res: Response, next: NextFunction) => Promise<unknown> | unknown
+    controller: (req: Request | AuthenticatedRequest, res: Response, next: NextFunction) => Promise<unknown> | unknown
 ) {
     return async (req: Request, res: Response, next: NextFunction) => {
         const completeRoute = req.method + " " + req.baseUrl + req.route.path;

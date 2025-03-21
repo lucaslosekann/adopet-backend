@@ -2,6 +2,7 @@ import { z } from "zod";
 //Required in prodution dont put .optional()
 const EnvSchema = z
     .object({
+        JWT_SECRET: z.string(),
         //DEV
         NODE_ENV: z.enum(["development", "test", "production"]).optional(),
         PORT: z
