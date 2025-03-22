@@ -55,6 +55,10 @@ export async function login(req: Request) {
 
     return HttpResponse.Created({
         token,
+        user: {
+            ...user,
+            password: undefined,
+        },
     });
 }
 
