@@ -9,7 +9,7 @@ import { generateToken } from "../Helpers/Jwt";
 import { AuthenticatedRequest } from "../Middlewares/AuthMiddleware";
 
 export async function register(req: Request) {
-    const { email, password, name } = RegisterSchema.parse(req.body);
+    const { email, password, name, address } = RegisterSchema.parse(req.body);
 
     const hashedPassword = await hash(password, 10);
     const user = await prisma.user
@@ -18,6 +18,9 @@ export async function register(req: Request) {
                 email,
                 password: hashedPassword,
                 name,
+                address: {
+                    create: address,
+                },
             },
         })
         .catch((err) => {
@@ -40,6 +43,9 @@ export async function login(req: Request) {
     const user = await prisma.user.findUnique({
         where: {
             email,
+        },
+        include: {
+            Ong: true,
         },
     });
     if (!user) {

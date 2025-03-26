@@ -18,6 +18,35 @@ model User {
   email     String   @unique
   name      String
   password  String
+  address   Address  @relation(fields: [addressId], references: [id])
+  addressId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Ong       Ong?
+}
+
+model Ong {
+  id        String   @id @default(cuid(2))
+  name      String
+  whatsapp  String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique
+  address   Address  @relation(fields: [addressId], references: [id])
+  addressId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Address {
+  id           String   @id @default(cuid(2))
+  street       String
+  number       String
+  neighborhood String
+  city         String
+  uf           String
+  postalCode   String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  Ong          Ong[]
+  User         User[]
 }
