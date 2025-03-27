@@ -1,10 +1,11 @@
 import { Router } from "express";
 import RequestHandler from "../Helpers/RequestHandler";
 
-import * as OngController from "../Controllers/OngController";
+import * as OngsController from "../Controllers/OngsController";
 
-const Ong = Router();
+const OngRouter = Router();
 
-Ong.post("/", RequestHandler(OngController.register));
+OngRouter.post("/", RequestHandler(OngsController.register));
+OngRouter.get("/:id", RequestHandler(OngsController.get));
 
-export default Ong;
+export default OngRouter;

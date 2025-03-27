@@ -53,7 +53,7 @@
 			"",
 			"import * as $1Controller from \"../Controllers/$1Controller\";",
 			"",
-			"const ${2:$1} = Router();",
+			"const ${2:$1Router} = Router();",
 			"",
 			"$2.get(\"/\", RequestHandler($1Controller.index));",
 			"$2.get(\"/:id\", RequestHandler($1Controller.get));",

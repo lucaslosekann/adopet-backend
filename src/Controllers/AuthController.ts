@@ -22,6 +22,9 @@ export async function register(req: Request) {
                     create: address,
                 },
             },
+            include: {
+                Ong: true,
+            },
         })
         .catch((err) => {
             if (err.code === "P2002") {

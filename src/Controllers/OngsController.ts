@@ -2,7 +2,7 @@ import { Request } from "express";
 import HttpError from "../Helpers/HttpError";
 import HttpResponse from "../Helpers/HttpResponse";
 
-import { RegisterSchema } from "../Schemas/OngSchema";
+import { GetOngSchema, RegisterOngSchema } from "../Schemas/OngSchema";
 import { prisma } from "../db";
 import { hash } from "bcrypt";
 import { generateToken } from "../Helpers/Jwt";
@@ -10,7 +10,7 @@ import validateCNPJ from "../Services/ValidateCNPJ";
 import { getCNPJData } from "../Services/ReceitaWS";
 
 export async function register(req: Request) {
-    const { email, password, cnpj } = RegisterSchema.parse(req.body);
+    const { email, password, cnpj } = RegisterOngSchema.parse(req.body);
 
     const isCNPJValid = validateCNPJ(cnpj);
     if (!isCNPJValid) {
@@ -49,7 +49,14 @@ export async function register(req: Request) {
                 },
             },
             include: {
-                user: true,
+                user: {
+                    include: {
+                        Ong: true,
+                    },
+                    omit: {
+                        password: true,
+                    },
+                },
             },
         })
         .catch((err) => {
@@ -63,5 +70,40 @@ export async function register(req: Request) {
     return HttpResponse.Created({
         ong,
         token,
+    });
+}
+
+export async function get(req: Request) {
+    const { id } = GetOngSchema.parse(req.params);
+
+    const data = await prisma.ong.findUnique({
+        where: {
+            id,
+        },
+        include: {
+            user: {
+                include: {
+                    address: true,
+                },
+                omit: {
+                    password: true,
+                    addressId: true,
+                },
+            },
+        },
+        omit: {
+            userId: true,
+        },
+    });
+    if (!data) {
+        throw HttpError.NotFound("ONG não encontrada");
+    }
+    const { user, ...ong } = data;
+
+    return HttpResponse.Created({
+        ...ong,
+        address: user.address,
+        email: user.email,
+        name: user.name,
     });
 }
