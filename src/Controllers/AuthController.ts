@@ -35,7 +35,6 @@ export async function register(req: Request) {
         user,
         token,
     });
-    2;
 }
 
 export async function login(req: Request) {
