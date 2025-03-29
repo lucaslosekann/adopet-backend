@@ -5,14 +5,17 @@ import logger from "./logger";
 import HttpResponse from "./HttpResponse";
 import { randomUUID } from "node:crypto";
 import { AuthenticatedRequest } from "../Middlewares/AuthMiddleware";
+import { MulterError } from "multer";
 
 export function MiddlewareHandler(
     middleware: (req: Request | AuthenticatedRequest, res: Response, next: NextFunction) => Promise<unknown> | unknown
 ) {
     return async (req: Request, res: Response, next: NextFunction) => {
+        const completeRoute = req.method + " " + req.baseUrl + req.route.path;
         try {
-            await middleware(req, res, next);
+            middleware(req, res, next);
         } catch (error) {
+            error.completeRoute = completeRoute;
             next(error);
         }
     };
@@ -46,6 +49,9 @@ export async function ErrorMiddleware(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _next: NextFunction
 ) {
+    if (error instanceof MulterError) {
+        return res.status(400).json({ message: error.message });
+    }
     if (error instanceof ZodError) {
         return res.status(400).json({ error: error.errors });
     }

@@ -14,15 +14,16 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid(2))
-  email     String   @unique
+  id        String     @id @default(cuid(2))
+  email     String     @unique
   name      String
   password  String
-  address   Address  @relation(fields: [addressId], references: [id])
+  address   Address    @relation(fields: [addressId], references: [id])
   addressId String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   Ong       Ong?
+  Adoption  Adoption[]
 }
 
 model Ong {
@@ -50,20 +51,21 @@ model Address {
 }
 
 model Pet {
-  id          String   @id @default(cuid(2))
+  id          String     @id @default(cuid(2))
   formerName  String
   dateOfBirth DateTime
   weight      Float
-  species     Specie   @relation(fields: [speciesName], references: [name])
+  species     Specie     @relation(fields: [speciesName], references: [name])
   speciesName String
-  breed       Breed    @relation(fields: [breedName], references: [name])
+  breed       Breed      @relation(fields: [breedName], references: [name])
   breedName   String
   castrated   Boolean
-  ong         Ong      @relation(fields: [ongId], references: [id])
+  ong         Ong        @relation(fields: [ongId], references: [id])
   ongId       String
   available   Boolean
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  Adoption    Adoption[]
 }
 
 model Specie {
@@ -74,4 +76,40 @@ model Specie {
 model Breed {
   name String @id
   Pet  Pet[]
+}
+
+enum AdoptionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Adoption {
+  id                        String                      @id @default(cuid(2))
+  pet                       Pet                         @relation(fields: [petId], references: [id])
+  petId                     String
+  user                      User                        @relation(fields: [userId], references: [id])
+  userId                    String
+  status                    AdoptionStatus              @default(PENDING)
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @updatedAt
+  AdoptionRequestSubmission AdoptionRequestSubmission[]
+
+  @@unique([petId, userId])
+}
+
+model AdoptionRequestSubmission {
+  id                        String   @id @default(cuid(2))
+  adoption                  Adoption @relation(fields: [adoptionId], references: [id])
+  idCard                    Bytes
+  profOfResidence           Bytes
+  adoptionId                String
+  hadPetsBefore             Boolean
+  hasOtherPets              Boolean
+  houseType                 String
+  hasFinancialConditions    Boolean
+  isPreparedForLongTerm     Boolean
+  whatWillDoIfProblemsArise String
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
 }
