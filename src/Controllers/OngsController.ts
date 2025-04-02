@@ -10,7 +10,7 @@ import validateCNPJ from "../Services/ValidateCNPJ";
 import { getCNPJData } from "../Services/ReceitaWS";
 
 export async function register(req: Request) {
-    const { email, password, cnpj } = RegisterOngSchema.parse(req.body);
+    const { email, password, cnpj, pixKey } = RegisterOngSchema.parse(req.body);
 
     const isCNPJValid = validateCNPJ(cnpj);
     if (!isCNPJValid) {
@@ -29,6 +29,7 @@ export async function register(req: Request) {
         .create({
             data: {
                 cnpj,
+                pixKey,
                 phone: cnpjData.telefone,
                 user: {
                     create: {

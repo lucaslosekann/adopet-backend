@@ -30,6 +30,7 @@ model Ong {
   id        String   @id @default(cuid(2))
   phone     String
   cnpj      String   @unique
+  pixKey    String   @unique
   user      User     @relation(fields: [userId], references: [id])
   userId    String   @unique
   createdAt DateTime @default(now())
