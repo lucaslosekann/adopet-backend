@@ -51,9 +51,6 @@ export async function register(req: Request) {
             },
             include: {
                 user: {
-                    include: {
-                        Ong: true,
-                    },
                     omit: {
                         password: true,
                     },
@@ -66,8 +63,11 @@ export async function register(req: Request) {
             }
             throw err;
         });
-
-    const token = generateToken(ong.user);
+    const { user, ...ongRest } = ong;
+    const token = generateToken({
+        ...user,
+        Ong: ongRest,
+    });
     return HttpResponse.Created({
         ong,
         token,

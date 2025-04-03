@@ -28,3 +28,23 @@ export const GetPetSchema = z.object({
         id: z.string(),
     }),
 });
+
+export const AddPetImageSchema = z.object({
+    params: z.object({
+        id: z.string(),
+    }),
+});
+
+export const RemovePetImageSchema = z.object({
+    params: z.object({
+        id: z.string(),
+        imgId: z.string(),
+    }),
+});
+
+export const GetPetImageSchema = z.object({
+    params: z.object({
+        id: z.string(),
+        imgId: z.string(),
+    }),
+});

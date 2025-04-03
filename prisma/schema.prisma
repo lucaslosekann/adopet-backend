@@ -67,6 +67,17 @@ model Pet {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   Adoption    Adoption[]
+  PetImage    PetImage[]
+}
+
+model PetImage {
+  id        String   @id @default(cuid(2))
+  data      Bytes
+  mimeType  String
+  pet       Pet      @relation(fields: [petId], references: [id])
+  petId     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Specie {

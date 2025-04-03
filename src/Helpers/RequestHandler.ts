@@ -31,6 +31,9 @@ export default function RequestHandler(
             if (response instanceof HttpResponse) {
                 return res.status(response.statusCode).json(response.payload);
             }
+            if (response === "NO_RESPONSE") {
+                return;
+            }
             logger.warn(`Controller on route ${completeRoute} did not return a HttpResponse object`);
             return res.status(200).end();
         } catch (error) {
