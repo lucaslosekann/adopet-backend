@@ -32,12 +32,27 @@ export async function get(req: Request) {
                     createdAt: true,
                 },
             },
+            ong: {
+                include: {
+                    user: {
+                        include: {
+                            address: true,
+                        },
+                    },
+                },
+            },
         },
     });
     if (!pet) {
         throw HttpError.NotFound("Pet não encontrado");
     }
-    return HttpResponse.Ok(pet);
+    return HttpResponse.Ok({
+        ...pet,
+        address: {
+            city: pet.ong.user.address.city,
+            uf: pet.ong.user.address.uf,
+        },
+    });
 }
 
 export async function create(req: AuthenticatedRequest) {
