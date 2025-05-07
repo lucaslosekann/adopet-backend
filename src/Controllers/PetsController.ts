@@ -65,25 +65,34 @@ export async function create(req: AuthenticatedRequest) {
             ...body,
             dateOfBirth: new Date(body.dateOfBirth),
             breed: {
-                connectOrCreate: {
-                    where: {
-                        name: body.breed,
-                    },
-                    create: {
-                        name: body.breed,
-                    },
-                },
+                ...(body.species
+                    ? {
+                          connectOrCreate: {
+                              where: {
+                                  name: body.breed,
+                              },
+                              create: {
+                                  name: body.breed,
+                                  Specie: {
+                                      connectOrCreate: {
+                                          where: {
+                                              name: body.species,
+                                          },
+                                          create: {
+                                              name: body.species,
+                                          },
+                                      },
+                                  },
+                              },
+                          },
+                      }
+                    : {
+                          connect: {
+                              name: body.breed,
+                          },
+                      }),
             },
-            species: {
-                connectOrCreate: {
-                    where: {
-                        name: body.species,
-                    },
-                    create: {
-                        name: body.species,
-                    },
-                },
-            },
+
             ong: {
                 connect: {
                     id: req.user.Ong.id,
@@ -113,26 +122,32 @@ export async function update(req: AuthenticatedRequest) {
                 ...rest,
                 ...(breed && {
                     breed: {
-                        connectOrCreate: {
-                            where: {
-                                name: breed,
-                            },
-                            create: {
-                                name: breed,
-                            },
-                        },
-                    },
-                }),
-                ...(species && {
-                    species: {
-                        connectOrCreate: {
-                            where: {
-                                name: species,
-                            },
-                            create: {
-                                name: species,
-                            },
-                        },
+                        ...(species
+                            ? {
+                                  connectOrCreate: {
+                                      where: {
+                                          name: breed,
+                                      },
+                                      create: {
+                                          name: breed,
+                                          Specie: {
+                                              connectOrCreate: {
+                                                  where: {
+                                                      name: species,
+                                                  },
+                                                  create: {
+                                                      name: species,
+                                                  },
+                                              },
+                                          },
+                                      },
+                                  },
+                              }
+                            : {
+                                  connect: {
+                                      name: breed,
+                                  },
+                              }),
                     },
                 }),
             },

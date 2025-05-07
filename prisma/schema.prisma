@@ -22,8 +22,8 @@ model User {
   addressId      String
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
-  size           String
-  expenseRange   String
+  size           String //Tamanho da casa - "small" | "medium" | "large"
+  expenseRange   String // Faixa de despesas - "250-499" | "500-749" | "750-999" | "1000+"
   isActive       Boolean
   isGoodWithKids Boolean
   Ong            Ong?
@@ -35,7 +35,7 @@ model Ong {
   phone     String
   cnpj      String   @unique
   pixKey    String   @unique
-  about     String
+  about     String?
   user      User     @relation(fields: [userId], references: [id])
   userId    String   @unique
   createdAt DateTime @default(now())
@@ -62,8 +62,6 @@ model Pet {
   dateOfBirth    DateTime
   weight         Float
   size           String
-  species        Specie     @relation(fields: [speciesName], references: [name])
-  speciesName    String
   breed          Breed      @relation(fields: [breedName], references: [name])
   breedName      String
   castrated      Boolean
@@ -77,6 +75,8 @@ model Pet {
   updatedAt      DateTime   @updatedAt
   Adoption       Adoption[]
   PetImage       PetImage[]
+  Specie         Specie?    @relation(fields: [specieName], references: [name])
+  specieName     String?
 }
 
 model PetImage {
@@ -90,13 +90,16 @@ model PetImage {
 }
 
 model Specie {
-  name String @id
-  Pet  Pet[]
+  name  String  @id
+  Pet   Pet[]
+  Breed Breed[]
 }
 
 model Breed {
-  name String @id
-  Pet  Pet[]
+  name       String @id
+  Pet        Pet[]
+  Specie     Specie @relation(fields: [specieName], references: [name])
+  specieName String
 }
 
 enum AdoptionStatus {

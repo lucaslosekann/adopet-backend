@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Ong" ALTER COLUMN "about" DROP NOT NULL;
