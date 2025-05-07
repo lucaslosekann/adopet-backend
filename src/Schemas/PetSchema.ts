@@ -3,11 +3,15 @@ import { z } from "zod";
 export const CreatePetSchema = z.object({
     formerName: z.string(),
     dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-    weight: z.number(),
     species: z.string(),
     breed: z.string(),
+    weight: z.number(),
+    size: z.string(),
     castrated: z.boolean(),
     available: z.boolean(),
+    expenseRange: z.string(),
+    isActive: z.boolean(),
+    isGoodWithKids: z.boolean(),
 });
 
 export const UpdatePetSchema = z.object({
