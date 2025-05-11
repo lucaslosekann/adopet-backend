@@ -4,7 +4,7 @@ export const RegisterSchema = z.object({
     email: z.string().email(),
     password: z.string().min(8),
     name: z.string(),
-    cpf: z.string().length(11),
+    taxId: z.string().length(11),
     phoneNumber: z.string().length(11),
     address: z.object({
         street: z.string(),

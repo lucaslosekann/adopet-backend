@@ -36,6 +36,8 @@ export async function register(req: Request) {
                         email,
                         password: hashedPassword,
                         name: cnpjData.nome,
+                        taxId: cnpj,
+                        phoneNumber: cnpjData.telefone,
                         address: {
                             create: {
                                 street: cnpjData.logradouro,
@@ -46,6 +48,7 @@ export async function register(req: Request) {
                                 postalCode: cnpjData.cep,
                             },
                         },
+                        petPreference: [""],
                         expenseRange: "small",
                         isActive: false,
                         isGoodWithKids: false,

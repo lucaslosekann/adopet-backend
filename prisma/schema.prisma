@@ -18,10 +18,13 @@ model User {
   email          String     @unique
   name           String
   password       String
+  taxId          String
+  phoneNumber    String
   address        Address    @relation(fields: [addressId], references: [id])
   addressId      String
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
+  petPreference  String[]
   size           String //Tamanho da casa - "small" | "medium" | "large"
   expenseRange   String // Faixa de despesas - "250-499" | "500-749" | "750-999" | "1000+"
   isActive       Boolean
