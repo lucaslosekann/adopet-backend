@@ -59,27 +59,27 @@ export async function create(req: AuthenticatedRequest) {
     if (!req.user.Ong) {
         throw HttpError.Forbidden("Somente ONGs podem inserir pets");
     }
-    const body = await CreatePetSchema.parseAsync(req.body);
+    const {species, breed, ...body} = await CreatePetSchema.parseAsync(req.body);
     const pet = await prisma.pet.create({
         data: {
             ...body,
             dateOfBirth: new Date(body.dateOfBirth),
             breed: {
-                ...(body.species
+                ...(species
                     ? {
                           connectOrCreate: {
                               where: {
-                                  name: body.breed,
+                                  name: breed,
                               },
                               create: {
-                                  name: body.breed,
+                                  name: breed,
                                   Specie: {
                                       connectOrCreate: {
                                           where: {
-                                              name: body.species,
+                                              name: species,
                                           },
                                           create: {
-                                              name: body.species,
+                                              name: species,
                                           },
                                       },
                                   },
@@ -88,7 +88,7 @@ export async function create(req: AuthenticatedRequest) {
                       }
                     : {
                           connect: {
-                              name: body.breed,
+                              name: breed,
                           },
                       }),
             },
