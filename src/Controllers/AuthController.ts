@@ -30,7 +30,7 @@ export async function register(req: Request) {
                 email,
                 password: hashedPassword,
                 name,
-                taxId, 
+                taxId,
                 phoneNumber,
                 address: {
                     create: address,
@@ -90,5 +90,20 @@ export async function login(req: Request) {
 }
 
 export async function me(req: AuthenticatedRequest) {
-    return HttpResponse.Ok(req.user);
+    const user = await prisma.user.findUnique({
+        where: {
+            id: req.user.id,
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            phoneNumber: true,
+            address: true,
+            createdAt: true,
+            updatedAt: true,
+            taxId: true,
+        },
+    });
+    return HttpResponse.Ok({ ...user });
 }
