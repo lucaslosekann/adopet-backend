@@ -41,6 +41,11 @@ export async function get(req: Request) {
                     },
                 },
             },
+            breed: {
+                select: {
+                    specieName: true,
+                },
+            },
         },
     });
     if (!pet) {
@@ -48,6 +53,7 @@ export async function get(req: Request) {
     }
     return HttpResponse.Ok({
         ...pet,
+        specieName: pet.breed.specieName,
         address: {
             city: pet.ong.user.address.city,
             uf: pet.ong.user.address.uf,
@@ -59,7 +65,7 @@ export async function create(req: AuthenticatedRequest) {
     if (!req.user.Ong) {
         throw HttpError.Forbidden("Somente ONGs podem inserir pets");
     }
-    const {species, breed, ...body} = await CreatePetSchema.parseAsync(req.body);
+    const { species, breed, ...body } = await CreatePetSchema.parseAsync(req.body);
     const pet = await prisma.pet.create({
         data: {
             ...body,
