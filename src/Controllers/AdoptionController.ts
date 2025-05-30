@@ -9,8 +9,8 @@ import { AuthenticatedRequest } from '../Middlewares/AuthMiddleware';
 export async function create(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     const files = req.files as Record<string, Express.Multer.File[]>;
     const idCard = files.idCard?.[0];
-    const profOfResidence = files.profOfResidence?.[0];
-    if (!idCard || !profOfResidence) {
+    const proofOfResidence = files.proofOfResidence?.[0];
+    if (!idCard || !proofOfResidence) {
         throw HttpError.BadRequest('Arquivos necessários não enviados');
     }
     const userId = req.user.id;
@@ -72,7 +72,7 @@ export async function create(req: AuthenticatedRequest, res: Response, next: Nex
         data: {
             ...data,
             idCard: idCard.buffer,
-            profOfResidence: profOfResidence.buffer,
+            profOfResidence: proofOfResidence.buffer,
             adoption: {
                 connect: {
                     id: adoption.id,
