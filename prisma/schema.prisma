@@ -78,8 +78,6 @@ model Pet {
   updatedAt      DateTime   @updatedAt
   Adoption       Adoption[]
   PetImage       PetImage[]
-  Specie         Specie?    @relation(fields: [specieName], references: [name])
-  specieName     String?
 }
 
 model PetImage {
@@ -94,7 +92,6 @@ model PetImage {
 
 model Specie {
   name  String  @id
-  Pet   Pet[]
   Breed Breed[]
 }
 
