@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const RegisterSchema = z.object({
     email: z.string().email(),
@@ -11,7 +11,7 @@ export const RegisterSchema = z.object({
         number: z.string(),
         neighborhood: z.string(),
         city: z.string(),
-        uf: z.string(),
+        uf: z.string().length(2),
         postalCode: z.string().length(8),
     }),
     petPreference: z.array(z.string()),
