@@ -5,135 +5,141 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
 }
 
 model User {
-  id             String     @id @default(cuid(2))
-  email          String     @unique
-  name           String
-  password       String
-  taxId          String
-  phoneNumber    String
-  address        Address    @relation(fields: [addressId], references: [id])
-  addressId      String
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
-  petPreference  String[]
-  size           String //Tamanho da casa - "small" | "medium" | "large"
-  expenseRange   String // Faixa de despesas - "250-499" | "500-749" | "750-999" | "1000+"
-  isActive       Boolean
-  isGoodWithKids Boolean
-  Ong            Ong?
-  Adoption       Adoption[]
+    id             String     @id @default(cuid(2))
+    email          String     @unique
+    name           String
+    password       String
+    taxId          String
+    phoneNumber    String
+    address        Address    @relation(fields: [addressId], references: [id])
+    addressId      String
+    createdAt      DateTime   @default(now())
+    updatedAt      DateTime   @updatedAt
+    petPreference  String[]
+    size           String //Tamanho da casa - "small" | "medium" | "large"
+    expenseRange   String // Faixa de despesas - "250-499" | "500-749" | "750-999" | "1000+"
+    isActive       Boolean
+    isGoodWithKids Boolean
+    Ong            Ong?
+    Adoption       Adoption[]
 }
 
 model Ong {
-  id        String   @id @default(cuid(2))
-  phone     String
-  cnpj      String   @unique
-  pixKey    String   @unique
-  about     String?
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Pets      Pet[]
+    id        String   @id @default(cuid(2))
+    phone     String
+    cnpj      String   @unique
+    pixKey    String   @unique
+    about     String?
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String   @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    Pets      Pet[]
 }
 
 model Address {
-  id           String   @id @default(cuid(2))
-  street       String
-  number       String
-  neighborhood String
-  city         String
-  uf           String
-  postalCode   String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  User         User[]
+    id           String   @id @default(cuid(2))
+    street       String
+    number       String
+    neighborhood String
+    city         String
+    uf           String
+    postalCode   String
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+    User         User[]
+}
+
+enum PetSex {
+    MALE
+    FEMALE
 }
 
 model Pet {
-  id             String     @id @default(cuid(2))
-  formerName     String
-  dateOfBirth    DateTime
-  weight         Float
-  size           String
-  breed          Breed      @relation(fields: [breedName], references: [name])
-  breedName      String
-  castrated      Boolean
-  expenseRange   String
-  isActive       Boolean
-  isGoodWithKids Boolean
-  ong            Ong        @relation(fields: [ongId], references: [id])
-  ongId          String
-  available      Boolean
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
-  Adoption       Adoption[]
-  PetImage       PetImage[]
+    id             String     @id @default(cuid(2))
+    formerName     String
+    sex            PetSex
+    dateOfBirth    DateTime
+    weight         Float
+    size           String
+    breed          Breed      @relation(fields: [breedName], references: [name])
+    breedName      String
+    castrated      Boolean
+    expenseRange   String
+    isActive       Boolean
+    isGoodWithKids Boolean
+    ong            Ong        @relation(fields: [ongId], references: [id])
+    ongId          String
+    available      Boolean
+    createdAt      DateTime   @default(now())
+    updatedAt      DateTime   @updatedAt
+    Adoption       Adoption[]
+    PetImage       PetImage[]
 }
 
 model PetImage {
-  id        String   @id @default(cuid(2))
-  data      Bytes
-  mimeType  String
-  pet       Pet      @relation(fields: [petId], references: [id])
-  petId     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    id        String   @id @default(cuid(2))
+    data      Bytes
+    mimeType  String
+    pet       Pet      @relation(fields: [petId], references: [id])
+    petId     String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model Specie {
-  name  String  @id
-  Breed Breed[]
+    name  String  @id
+    Breed Breed[]
 }
 
 model Breed {
-  name       String @id
-  Pet        Pet[]
-  Specie     Specie @relation(fields: [specieName], references: [name])
-  specieName String
+    name       String @id
+    Pet        Pet[]
+    Specie     Specie @relation(fields: [specieName], references: [name])
+    specieName String
 }
 
 enum AdoptionStatus {
-  PENDING
-  APPROVED
-  REJECTED
+    PENDING
+    APPROVED
+    REJECTED
 }
 
 model Adoption {
-  id                        String                      @id @default(cuid(2))
-  pet                       Pet                         @relation(fields: [petId], references: [id])
-  petId                     String
-  user                      User                        @relation(fields: [userId], references: [id])
-  userId                    String
-  status                    AdoptionStatus              @default(PENDING)
-  createdAt                 DateTime                    @default(now())
-  updatedAt                 DateTime                    @updatedAt
-  AdoptionRequestSubmission AdoptionRequestSubmission[]
+    id                        String                      @id @default(cuid(2))
+    pet                       Pet                         @relation(fields: [petId], references: [id])
+    petId                     String
+    user                      User                        @relation(fields: [userId], references: [id])
+    userId                    String
+    status                    AdoptionStatus              @default(PENDING)
+    createdAt                 DateTime                    @default(now())
+    updatedAt                 DateTime                    @updatedAt
+    AdoptionRequestSubmission AdoptionRequestSubmission[]
 
-  @@unique([petId, userId])
+    @@unique([petId, userId])
 }
 
 model AdoptionRequestSubmission {
-  id                        String   @id @default(cuid(2))
-  adoption                  Adoption @relation(fields: [adoptionId], references: [id])
-  idCard                    Bytes
-  profOfResidence           Bytes
-  adoptionId                String
-  hadPetsBefore             Boolean
-  hasOtherPets              Boolean
-  houseType                 String
-  hasFinancialConditions    Boolean
-  isPreparedForLongTerm     Boolean
-  whatWillDoIfProblemsArise String
-  createdAt                 DateTime @default(now())
-  updatedAt                 DateTime @updatedAt
+    id                        String   @id @default(cuid(2))
+    adoption                  Adoption @relation(fields: [adoptionId], references: [id])
+    idCard                    Bytes
+    profOfResidence           Bytes
+    adoptionId                String
+    hadPetsBefore             Boolean
+    hasOtherPets              Boolean
+    houseType                 String
+    hasFinancialConditions    Boolean
+    isPreparedForLongTerm     Boolean
+    whatWillDoIfProblemsArise String
+    createdAt                 DateTime @default(now())
+    updatedAt                 DateTime @updatedAt
 }

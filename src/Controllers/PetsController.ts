@@ -13,9 +13,27 @@ import {
 } from "../Schemas/PetSchema";
 import { prisma } from "../db";
 
-export async function index() {
-    //implementar filtro de pets
-    throw HttpError.NotImplemented("Not Implemented");
+export async function index(req: Request) {
+    const params = req.params;
+    const pets = await prisma.pet.findMany({
+        where: {
+            isActive: true
+        },
+        take: isNaN(Number(params.limit)) ? undefined : Number(params.limit),
+        include: {
+            PetImage: {
+                select: {
+                    id: true
+                }
+            },
+            breed: {
+                select: {
+                    specieName: true
+                }
+            }
+        }
+    });
+    return HttpResponse.Ok(pets.map(p => ({...p, specieName: p.breed.specieName })));
 }
 
 export async function get(req: Request) {
@@ -73,30 +91,30 @@ export async function create(req: AuthenticatedRequest) {
             breed: {
                 ...(species
                     ? {
-                          connectOrCreate: {
-                              where: {
-                                  name: breed,
-                              },
-                              create: {
-                                  name: breed,
-                                  Specie: {
-                                      connectOrCreate: {
-                                          where: {
-                                              name: species,
-                                          },
-                                          create: {
-                                              name: species,
-                                          },
-                                      },
-                                  },
-                              },
-                          },
-                      }
+                        connectOrCreate: {
+                            where: {
+                                name: breed,
+                            },
+                            create: {
+                                name: breed,
+                                Specie: {
+                                    connectOrCreate: {
+                                        where: {
+                                            name: species,
+                                        },
+                                        create: {
+                                            name: species,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    }
                     : {
-                          connect: {
-                              name: breed,
-                          },
-                      }),
+                        connect: {
+                            name: breed,
+                        },
+                    }),
             },
 
             ong: {
@@ -130,30 +148,30 @@ export async function update(req: AuthenticatedRequest) {
                     breed: {
                         ...(species
                             ? {
-                                  connectOrCreate: {
-                                      where: {
-                                          name: breed,
-                                      },
-                                      create: {
-                                          name: breed,
-                                          Specie: {
-                                              connectOrCreate: {
-                                                  where: {
-                                                      name: species,
-                                                  },
-                                                  create: {
-                                                      name: species,
-                                                  },
-                                              },
-                                          },
-                                      },
-                                  },
-                              }
+                                connectOrCreate: {
+                                    where: {
+                                        name: breed,
+                                    },
+                                    create: {
+                                        name: breed,
+                                        Specie: {
+                                            connectOrCreate: {
+                                                where: {
+                                                    name: species,
+                                                },
+                                                create: {
+                                                    name: species,
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            }
                             : {
-                                  connect: {
-                                      name: breed,
-                                  },
-                              }),
+                                connect: {
+                                    name: breed,
+                                },
+                            }),
                     },
                 }),
             },

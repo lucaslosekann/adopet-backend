@@ -4,6 +4,7 @@ export const CreatePetSchema = z.object({
     formerName: z.string(),
     dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     species: z.string(),
+    sex: z.enum(["MALE", "FEMALE"]),
     breed: z.string(),
     weight: z.number(),
     size: z.string(),
