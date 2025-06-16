@@ -10,6 +10,8 @@ const EnvSchema = z
             .optional()
             .default("8000")
             .transform((val) => Number(val)),
+        RS_BASEURL: z.string(),
+        RS_APIKEY: z.string(),
     })
     .refine((input) => {
         const requiredInDevelopment: string[] = ["PORT"];

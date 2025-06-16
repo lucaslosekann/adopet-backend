@@ -14,12 +14,12 @@ import {
 import { prisma } from "../db";
 
 export async function index(req: Request) {
-    const params = req.params;
+    const query = req.query;
     const pets = await prisma.pet.findMany({
         where: {
             isActive: true
         },
-        take: isNaN(Number(params.limit)) ? undefined : Number(params.limit),
+        take: isNaN(Number(query.limit)) ? undefined : Number(query.limit),
         include: {
             PetImage: {
                 select: {

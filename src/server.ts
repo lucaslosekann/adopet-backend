@@ -24,6 +24,7 @@ import AuthRouter from "./Routers/AuthRouter";
 import OngRouter from "./Routers/OngRouter";
 import PetsRouter from "./Routers/PetRouter";
 import AdoptionRouter from "./Routers/AdoptionRouter";
+import { RecommendationRouter } from "./Routers/RecommendationRouter";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -36,6 +37,7 @@ apiV1Router.use("/auth", AuthRouter);
 apiV1Router.use("/ongs", OngRouter);
 apiV1Router.use("/pets", PetsRouter);
 apiV1Router.use("/adoption", AdoptionRouter);
+apiV1Router.use("/recommendation", RecommendationRouter);
 
 app.use(ErrorMiddleware);
 const server = app.listen(ENV.PORT, () => logger.info("Api it's running " + ENV.PORT));
