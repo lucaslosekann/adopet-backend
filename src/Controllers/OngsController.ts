@@ -8,6 +8,7 @@ import { hash } from "bcrypt";
 import { generateToken } from "../Helpers/Jwt";
 import validateCNPJ from "../Services/ValidateCNPJ";
 import { getCNPJData } from "../Services/ReceitaWS";
+import { AuthenticatedRequest } from "src/Middlewares/AuthMiddleware";
 
 export async function register(req: Request) {
     const { email, password, cnpj, pixKey } = RegisterOngSchema.parse(req.body);
@@ -114,4 +115,35 @@ export async function get(req: Request) {
         email: user.email,
         name: user.name,
     });
+}
+
+
+export async function getPets(req:AuthenticatedRequest) {
+    const ongId = req.user.Ong?.id;
+    if (!ongId) {
+        throw HttpError.Unauthorized("ONG não está autenticada");
+    }
+
+    const pets = await prisma.pet.findMany({
+        where: {
+            ongId,
+        },
+        include: {
+            PetImage: {
+                select: {
+                    id: true,
+                    mimeType: true,
+                    createdAt: true,
+                },
+            },
+            breed: {
+                select: {
+                    specieName: true,
+                },
+            },
+        },
+
+    });
+
+    return HttpResponse.Ok(pets);
 }

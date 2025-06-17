@@ -103,6 +103,11 @@ export async function me(req: AuthenticatedRequest) {
             createdAt: true,
             updatedAt: true,
             taxId: true,
+            Ong: {
+                select: {
+                    id: true
+                }
+            }
         },
     });
     return HttpResponse.Ok({ ...user });
