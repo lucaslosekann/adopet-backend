@@ -2,9 +2,10 @@ import { NextFunction, Request, Response } from 'express';
 import HttpError from '../Helpers/HttpError';
 import HttpResponse from '../Helpers/HttpResponse';
 
-import { SubmissionSchema } from '../Schemas/AdoptionSchema';
+import { GetDocSchema, SubmissionSchema, UpdateStatusSchema } from '../Schemas/AdoptionSchema';
 import { prisma } from '../db';
 import { AuthenticatedRequest } from '../Middlewares/AuthMiddleware';
+import { UpdatePetSchema } from 'src/Schemas/PetSchema';
 
 export async function create(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     const files = req.files as Record<string, Express.Multer.File[]>;
@@ -117,12 +118,132 @@ export async function get(req: AuthenticatedRequest) {
     });
 }
 
-export async function update() {
-    throw HttpError.NotImplemented('Not Implemented');
+export async function update(req: AuthenticatedRequest) {
+    const { adoptionId, approved } = await UpdateStatusSchema.parseAsync(req.body);
+
+    const verifyAdoption = await prisma.adoption.findUnique({
+        where: {
+            id: adoptionId
+        }
+    })
+    if(!verifyAdoption){
+        return HttpError.NotFound("Adoção não encontrada.");
+    }
+
+    const adoption = await prisma.adoption.update({
+        where: {
+           id: adoptionId
+        },
+        data: {
+            status: approved ? 'APPROVED' : 'REJECTED',
+        },
+    });
+    return HttpResponse.Ok({
+        message: "Status da adoção atualizada com sucesso!",
+        data: adoption,
+    });
 }
 
-export async function index() {
-    throw HttpError.NotImplemented('Not Implemented');
+export async function index(req: Request) {
+    const query = req.query;
+        const adoptions = await prisma.adoption.findMany({
+            select: {
+                id:true,
+                pet:{
+                    select:{
+                        formerName: true
+                    } 
+                },
+                user: {
+                    select: {
+                        name: true
+                    }
+                },
+                status: true,
+                createdAt: true,
+                updatedAt: true
+            }
+        });
+    return HttpResponse.Ok(adoptions);
+}
+
+export async function getAdoptantRG(req: AuthenticatedRequest, res: Response){
+    const { params } = await GetDocSchema.parseAsync({ params: req.params });
+    const { adoptionId } = params;
+
+    const doc = await prisma.adoptionRequestSubmission.findFirst({
+        where: {
+            adoptionId: adoptionId
+        },
+        select: {
+            idCard: true,
+        },
+    });
+
+    if (!doc) {
+        throw HttpError.NotFound('RG não encontrado');
+    }
+
+    res.setHeader('Content-Length', doc.idCard.length);
+
+    res.writeHead(200);
+    res.write(doc.idCard);
+    res.end();
+
+    return HttpResponse.NoResponse();
+}
+
+export async function getAdoptantProofResidence(req: AuthenticatedRequest, res: Response){
+    const { params } = await GetDocSchema.parseAsync({ params: req.params });
+    const { adoptionId } = params;
+
+    const doc = await prisma.adoptionRequestSubmission.findFirst({
+        where: {
+            adoptionId: adoptionId
+        },
+        select: {
+            profOfResidence: true,
+        },
+    });
+
+    if (!doc) {
+        throw HttpError.NotFound('Comprovante de Residência não encontrado');
+    }
+
+    res.setHeader('Content-Length', doc.profOfResidence.length);
+
+    res.writeHead(200);
+    res.write(doc.profOfResidence);
+    res.end();
+
+    return HttpResponse.NoResponse();
+}
+
+export async function getSubmission(req: AuthenticatedRequest){
+    const { params } = await GetDocSchema.parseAsync({ params: req.params });
+    const { adoptionId } = params;
+    
+    const submission = await prisma.adoptionRequestSubmission.findFirst({
+        where: {
+            adoptionId: adoptionId
+        },
+        select: {
+            whatWillDoIfProblemsArise: true,
+            hadPetsBefore: true,
+            hasOtherPets: true,
+            isPreparedForLongTerm: true, 
+            hasFinancialConditions: true,
+            houseType: true,
+        }, 
+    });
+
+    if (!submission) {
+        throw HttpError.NotFound('Nenhuma submissão encontrada para esta adoção');
+    }
+
+
+    return HttpResponse.Ok(submission);
+
 }
 
 export async function remove() {

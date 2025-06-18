@@ -7,10 +7,10 @@ export const CreatePetSchema = z.object({
     sex: z.enum(["MALE", "FEMALE"]),
     breed: z.string(),
     weight: z.number(),
-    size: z.string(),
+    size: z.enum(["small", "medium", "large"]),
     castrated: z.boolean(),
     available: z.boolean(),
-    expenseRange: z.string(),
+    expenseRange: z.enum(["250-499", "500-749", "750-999", "1000+"]),
     isActive: z.boolean(),
     isGoodWithKids: z.boolean(),
 });
