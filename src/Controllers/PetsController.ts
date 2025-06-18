@@ -17,7 +17,7 @@ export async function index(req: Request) {
     const query = req.query;
     const pets = await prisma.pet.findMany({
         where: {
-            isActive: true,
+            available: true,
         },
         take: isNaN(Number(query.limit)) ? undefined : Number(query.limit),
         include: {
