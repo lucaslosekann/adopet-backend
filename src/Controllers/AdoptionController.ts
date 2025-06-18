@@ -1,17 +1,17 @@
-import { NextFunction, Request, Response } from 'express';
-import HttpError from '../Helpers/HttpError';
-import HttpResponse from '../Helpers/HttpResponse';
+import { NextFunction, Request, Response } from "express";
+import HttpError from "../Helpers/HttpError";
+import HttpResponse from "../Helpers/HttpResponse";
 
-import { SubmissionSchema } from '../Schemas/AdoptionSchema';
-import { prisma } from '../db';
-import { AuthenticatedRequest } from '../Middlewares/AuthMiddleware';
+import { SubmissionSchema } from "../Schemas/AdoptionSchema";
+import { prisma } from "../db";
+import { AuthenticatedRequest } from "../Middlewares/AuthMiddleware";
 
 export async function create(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     const files = req.files as Record<string, Express.Multer.File[]>;
     const idCard = files.idCard?.[0];
     const proofOfResidence = files.proofOfResidence?.[0];
     if (!idCard || !proofOfResidence) {
-        throw HttpError.BadRequest('Arquivos necessários não enviados');
+        throw HttpError.BadRequest("Arquivos necessários não enviados");
     }
     const userId = req.user.id;
 
@@ -26,7 +26,7 @@ export async function create(req: AuthenticatedRequest, res: Response, next: Nex
         },
     });
     if (!pet) {
-        throw HttpError.NotFound('Pet não encontrado');
+        throw HttpError.NotFound("Pet não encontrado");
     }
     const user = await prisma.user.findUnique({
         where: {
@@ -34,22 +34,23 @@ export async function create(req: AuthenticatedRequest, res: Response, next: Nex
         },
         include: {
             Adoption: true,
+            Ong: true,
         },
     });
     if (!user) {
-        throw HttpError.NotFound('Usuário não encontrado');
+        throw HttpError.NotFound("Usuário não encontrado");
     }
-    if (user.Adoption.some((adoption) => adoption.status === 'PENDING')) {
-        throw HttpError.Forbidden('Você já tem uma adoção pendente');
+    if (user.Adoption.some((adoption) => adoption.status === "PENDING")) {
+        throw HttpError.Forbidden("Você já tem uma adoção pendente");
     }
-    if (pet.ong.userId === userId) {
-        throw HttpError.Forbidden('Você não pode adotar seu próprio pet');
+    if (user.Ong != null) {
+        throw HttpError.BadRequest("Usuário não pode adotar um pet se for uma ONG");
     }
     if (!pet.available) {
-        throw HttpError.Forbidden('Pet não disponível para adoção');
+        throw HttpError.Forbidden("Pet não disponível para adoção");
     }
-    if (!pet.Adoption.every((adoption) => adoption.status === 'REJECTED')) {
-        throw HttpError.Forbidden('Pet já foi adotado ou está em processo de adoção');
+    if (!pet.Adoption.every((adoption) => adoption.status === "REJECTED")) {
+        throw HttpError.Forbidden("Pet já foi adotado ou está em processo de adoção");
     }
 
     const adoption = await prisma.adoption.upsert({
@@ -64,7 +65,7 @@ export async function create(req: AuthenticatedRequest, res: Response, next: Nex
             userId,
         },
         update: {
-            status: 'PENDING',
+            status: "PENDING",
         },
     });
 
@@ -86,7 +87,7 @@ export async function create(req: AuthenticatedRequest, res: Response, next: Nex
     });
 
     return HttpResponse.Created({
-        message: 'Adoção requerida com sucesso',
+        message: "Adoção requerida com sucesso",
         data: submission,
     });
 }
@@ -99,32 +100,32 @@ export async function get(req: AuthenticatedRequest) {
         include: {
             Adoption: {
                 orderBy: {
-                    createdAt: 'desc',
+                    createdAt: "desc",
                 },
             },
         },
     });
     if (!user) {
-        throw HttpError.NotFound('Usuário não encontrado');
+        throw HttpError.NotFound("Usuário não encontrado");
     }
     const adoption = user.Adoption[0];
     if (!adoption) {
-        throw HttpError.NotFound('Nenhuma adoção encontrada');
+        throw HttpError.NotFound("Nenhuma adoção encontrada");
     }
     return HttpResponse.Ok({
-        message: 'Adoção encontrada com sucesso',
+        message: "Adoção encontrada com sucesso",
         data: adoption,
     });
 }
 
 export async function update() {
-    throw HttpError.NotImplemented('Not Implemented');
+    throw HttpError.NotImplemented("Not Implemented");
 }
 
 export async function index() {
-    throw HttpError.NotImplemented('Not Implemented');
+    throw HttpError.NotImplemented("Not Implemented");
 }
 
 export async function remove() {
-    throw HttpError.NotImplemented('Not Implemented');
+    throw HttpError.NotImplemented("Not Implemented");
 }

@@ -8,6 +8,7 @@ import { upload } from "../server";
 const PetsRouter = Router();
 
 PetsRouter.get("/", RequestHandler(PetsController.index));
+PetsRouter.get("/species", RequestHandler(PetsController.getAllSpecies));
 PetsRouter.get("/:id", RequestHandler(PetsController.get));
 PetsRouter.post("/", AuthMiddleware, RequestHandler(PetsController.create));
 PetsRouter.put("/:id", AuthMiddleware, RequestHandler(PetsController.update));
@@ -16,7 +17,7 @@ PetsRouter.put(
     "/:id/image",
     AuthMiddleware,
     MiddlewareHandler(upload.single("img")),
-    RequestHandler(PetsController.addImage)
+    RequestHandler(PetsController.addImage),
 );
 PetsRouter.delete("/:id/image/:imgId", AuthMiddleware, RequestHandler(PetsController.removeImage));
 PetsRouter.get("/:id/image/:imgId", RequestHandler(PetsController.getImage));

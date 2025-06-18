@@ -105,9 +105,9 @@ export async function me(req: AuthenticatedRequest) {
             taxId: true,
             Ong: {
                 select: {
-                    id: true
-                }
-            }
+                    id: true,
+                },
+            },
         },
     });
     return HttpResponse.Ok({ ...user });

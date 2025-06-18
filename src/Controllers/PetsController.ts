@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
-import HttpError from '../Helpers/HttpError';
-import HttpResponse from '../Helpers/HttpResponse';
-import { AuthenticatedRequest } from '../Middlewares/AuthMiddleware';
+import { Request, Response } from "express";
+import HttpError from "../Helpers/HttpError";
+import HttpResponse from "../Helpers/HttpResponse";
+import { AuthenticatedRequest } from "../Middlewares/AuthMiddleware";
 
 import {
     AddPetImageSchema,
@@ -10,8 +10,8 @@ import {
     GetPetImageSchema,
     RemovePetImageSchema,
     UpdatePetSchema,
-} from '../Schemas/PetSchema';
-import { prisma } from '../db';
+} from "../Schemas/PetSchema";
+import { prisma } from "../db";
 
 export async function index(req: Request) {
     const query = req.query;
@@ -67,7 +67,7 @@ export async function get(req: Request) {
         },
     });
     if (!pet) {
-        throw HttpError.NotFound('Pet não encontrado');
+        throw HttpError.NotFound("Pet não encontrado");
     }
     return HttpResponse.Ok({
         ...pet,
@@ -81,7 +81,7 @@ export async function get(req: Request) {
 
 export async function create(req: AuthenticatedRequest) {
     if (!req.user.Ong) {
-        throw HttpError.Forbidden('Somente ONGs podem inserir pets');
+        throw HttpError.Forbidden("Somente ONGs podem inserir pets");
     }
     const { species, breed, ...body } = await CreatePetSchema.parseAsync(req.body);
     const pet = await prisma.pet.create({
@@ -129,7 +129,7 @@ export async function create(req: AuthenticatedRequest) {
 
 export async function update(req: AuthenticatedRequest) {
     if (!req.user.Ong) {
-        throw HttpError.Forbidden('Somente ONGs podem atualizar pets');
+        throw HttpError.Forbidden("Somente ONGs podem atualizar pets");
     }
     const { body, params } = await UpdatePetSchema.parseAsync({
         body: req.body,
@@ -177,8 +177,8 @@ export async function update(req: AuthenticatedRequest) {
             },
         })
         .catch((err) => {
-            if (err.code === 'P2025') {
-                throw HttpError.NotFound('Pet não encontrado');
+            if (err.code === "P2025") {
+                throw HttpError.NotFound("Pet não encontrado");
             }
             throw err;
         });
@@ -187,7 +187,7 @@ export async function update(req: AuthenticatedRequest) {
 
 export async function remove(req: AuthenticatedRequest) {
     if (!req.user.Ong) {
-        throw HttpError.Forbidden('Somente ONGs podem remover pets');
+        throw HttpError.Forbidden("Somente ONGs podem remover pets");
     }
     const { params } = await DeletePetSchema.parseAsync({ params: req.params });
     await prisma.pet
@@ -200,8 +200,8 @@ export async function remove(req: AuthenticatedRequest) {
             },
         })
         .catch((err) => {
-            if (err.code === 'P2025') {
-                throw HttpError.NotFound('Pet não encontrado');
+            if (err.code === "P2025") {
+                throw HttpError.NotFound("Pet não encontrado");
             }
             throw err;
         });
@@ -210,11 +210,11 @@ export async function remove(req: AuthenticatedRequest) {
 
 export async function addImage(req: AuthenticatedRequest) {
     if (!req.user.Ong) {
-        throw HttpError.Forbidden('Somente ONGs podem modificar pets');
+        throw HttpError.Forbidden("Somente ONGs podem modificar pets");
     }
     const img = req.file;
     if (!img) {
-        throw HttpError.BadRequest('Imagem não encontrada');
+        throw HttpError.BadRequest("Imagem não encontrada");
     }
     const { params } = await AddPetImageSchema.parseAsync({ params: req.params });
 
@@ -228,13 +228,13 @@ export async function addImage(req: AuthenticatedRequest) {
             },
         })
         .catch((err) => {
-            if (err.code === 'P2025') {
-                throw HttpError.NotFound('Pet não encontrado');
+            if (err.code === "P2025") {
+                throw HttpError.NotFound("Pet não encontrado");
             }
             throw err;
         });
     if (ongId !== req.user.Ong.id) {
-        throw HttpError.Forbidden('ONG não tem permissão para modificar este pet');
+        throw HttpError.Forbidden("ONG não tem permissão para modificar este pet");
     }
 
     const pet = await prisma.pet
@@ -261,8 +261,8 @@ export async function addImage(req: AuthenticatedRequest) {
             },
         })
         .catch((err) => {
-            if (err.code === 'P2025') {
-                throw HttpError.NotFound('Pet não encontrado');
+            if (err.code === "P2025") {
+                throw HttpError.NotFound("Pet não encontrado");
             }
             throw err;
         });
@@ -272,7 +272,7 @@ export async function addImage(req: AuthenticatedRequest) {
 
 export async function removeImage(req: AuthenticatedRequest) {
     if (!req.user.Ong) {
-        throw HttpError.Forbidden('Somente ONGs podem modificar pets');
+        throw HttpError.Forbidden("Somente ONGs podem modificar pets");
     }
     const { params } = await RemovePetImageSchema.parseAsync({ params: req.params });
 
@@ -286,13 +286,13 @@ export async function removeImage(req: AuthenticatedRequest) {
             },
         })
         .catch((err) => {
-            if (err.code === 'P2025') {
-                throw HttpError.NotFound('Pet não encontrado');
+            if (err.code === "P2025") {
+                throw HttpError.NotFound("Pet não encontrado");
             }
             throw err;
         });
     if (ongId !== req.user.Ong.id) {
-        throw HttpError.Forbidden('ONG não tem permissão para modificar este pet');
+        throw HttpError.Forbidden("ONG não tem permissão para modificar este pet");
     }
 
     await prisma.pet
@@ -310,8 +310,8 @@ export async function removeImage(req: AuthenticatedRequest) {
             select: {},
         })
         .catch((err) => {
-            if (err.code === 'P2025') {
-                throw HttpError.NotFound('Pet não encontrado');
+            if (err.code === "P2025") {
+                throw HttpError.NotFound("Pet não encontrado");
             }
             throw err;
         });
@@ -336,17 +336,17 @@ export async function getImage(req: AuthenticatedRequest, res: Response) {
             },
         })
         .catch((err) => {
-            if (err.code === 'P2025') {
-                throw HttpError.NotFound('Imagem não encontrada');
+            if (err.code === "P2025") {
+                throw HttpError.NotFound("Imagem não encontrada");
             }
             throw err;
         });
 
     if (!img) {
-        throw HttpError.NotFound('Imagem não encontrada');
+        throw HttpError.NotFound("Imagem não encontrada");
     }
-    res.setHeader('Content-Type', img.mimeType);
-    res.setHeader('Content-Length', img.data.length);
+    res.setHeader("Content-Type", img.mimeType);
+    res.setHeader("Content-Length", img.data.length);
 
     res.writeHead(200);
     res.write(img.data);
@@ -356,5 +356,15 @@ export async function getImage(req: AuthenticatedRequest, res: Response) {
 }
 
 export async function getAllSpecies() {
-    throw HttpError.NotImplemented('Endpoint não implementado');
+    const species = await prisma.specie.findMany({
+        select: {
+            name: true,
+            Breed: {
+                select: {
+                    name: true,
+                },
+            },
+        },
+    });
+    return HttpResponse.Ok(species);
 }
