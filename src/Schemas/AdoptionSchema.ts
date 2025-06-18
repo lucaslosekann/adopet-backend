@@ -21,3 +21,20 @@ export const SubmissionSchema = z.object({
     whatWillDoIfProblemsArise: z.string(),
     petId: z.string(),
 });
+
+export const UpdateStatusSchema = z.object({
+    adoptionId: z.string(),
+    approved: z.boolean()
+})
+
+export const GetDocSchema = z.object({
+    params: z.object({
+        adoptionId: z.string()
+    }),
+});
+
+export const GetSubmissionSchema = z.object({
+    params: z.object({
+        adoptionId: z.string()
+    }),
+});
