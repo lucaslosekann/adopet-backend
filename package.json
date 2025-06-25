@@ -8,7 +8,8 @@
     "clear:prod": "rm -rf dist",
     "build": "npm run clear:prod && tsc",
     "build-dev": "npm run clear && tsc --sourceMap",
-    "dev": "ts-node-dev -r tsconfig-paths/register --respawn --ignore-watch node_modules --no-notify src/server.ts"
+    "dev": "ts-node-dev -r tsconfig-paths/register --respawn --ignore-watch node_modules --no-notify src/server.ts",
+    "start": "node dist/server.js"
   },
   "author": "",
   "license": "ISC",

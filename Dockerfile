@@ -11,11 +11,14 @@ RUN npm prune --omit=dev
 
 #Considering we are using prisma, we need to generate the prisma client and migrate the database
 ARG DATABASE_URL
+ARG DATABASE_URL_LOCAL
 ENV DATABASE_URL=$DATABASE_URL
 
 RUN npx prisma generate
 RUN npx prisma migrate deploy
 
+
+ENV DATABASE_URL=$DATABASE_URL_LOCAL
 ENV NODE_ENV=production
 
 
