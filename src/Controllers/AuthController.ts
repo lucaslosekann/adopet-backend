@@ -108,6 +108,15 @@ export async function me(req: AuthenticatedRequest) {
                     id: true,
                 },
             },
+            Adoption: {
+                take: 1,
+                orderBy: {
+                    createdAt: "desc",
+                },
+                select: {
+                    status: true,
+                },
+            },
         },
     });
     return HttpResponse.Ok({ ...user });
