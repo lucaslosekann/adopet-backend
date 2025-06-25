@@ -8,7 +8,7 @@ import { hash } from "bcrypt";
 import { generateToken } from "../Helpers/Jwt";
 import validateCNPJ from "../Services/ValidateCNPJ";
 import { getCNPJData } from "../Services/ReceitaWS";
-import { AuthenticatedRequest } from "src/Middlewares/AuthMiddleware";
+import { AuthenticatedRequest } from "../Middlewares/AuthMiddleware";
 
 export async function register(req: Request) {
     const { email, password, cnpj, pixKey } = RegisterOngSchema.parse(req.body);
@@ -117,8 +117,7 @@ export async function get(req: Request) {
     });
 }
 
-
-export async function getPets(req:AuthenticatedRequest) {
+export async function getPets(req: AuthenticatedRequest) {
     const ongId = req.user.Ong?.id;
     if (!ongId) {
         throw HttpError.Unauthorized("ONG não está autenticada");
@@ -142,7 +141,6 @@ export async function getPets(req:AuthenticatedRequest) {
                 },
             },
         },
-
     });
 
     return HttpResponse.Ok(pets);

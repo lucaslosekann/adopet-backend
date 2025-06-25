@@ -1,7 +1,7 @@
 import { Router } from "express";
 import RequestHandler, { MiddlewareHandler } from "../Helpers/RequestHandler";
 import * as RecommendationController from "../Controllers/RecommendationController";
-import AuthMiddleware from "src/Middlewares/AuthMiddleware";
+import AuthMiddleware from "../Middlewares/AuthMiddleware";
 
 export const RecommendationRouter = Router();
 
