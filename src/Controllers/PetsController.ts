@@ -18,6 +18,11 @@ export async function index(req: Request) {
     const pets = await prisma.pet.findMany({
         where: {
             available: true,
+            AND: [
+                {
+                    OR: [{ Adoption: { none: {} } }, { Adoption: { every: { status: "REJECTED" } } }],
+                },
+            ],
         },
         take: isNaN(Number(query.limit)) ? undefined : Number(query.limit),
         include: {
