@@ -136,7 +136,7 @@ export async function update(req: AuthenticatedRequest) {
         params: req.params,
     });
     const { breed, species, ...rest } = body;
-    body.dateOfBirth = body.dateOfBirth ? new Date(body.dateOfBirth).toISOString() : undefined;
+    rest.dateOfBirth = rest.dateOfBirth ? new Date(rest.dateOfBirth).toISOString() : undefined;
     const pet = await prisma.pet
         .update({
             where: {
