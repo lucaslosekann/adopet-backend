@@ -307,7 +307,6 @@ export async function removeImage(req: AuthenticatedRequest) {
                     },
                 },
             },
-            select: {},
         })
         .catch((err) => {
             if (err.code === "P2025") {
